@@ -46,6 +46,9 @@ class Ui_Dialog(object):
         self.FindButton = QtWidgets.QPushButton(self.groupBox_2)
         self.FindButton.setGeometry(QtCore.QRect(30, 160, 261, 71))
         self.FindButton.setObjectName("FindButton")
+        self.FormButton = QtWidgets.QPushButton(self.groupBox_2)
+        self.FormButton.setGeometry(QtCore.QRect(390, 50, 271, 71))
+        self.FormButton.setObjectName("FormButton")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -60,3 +63,4 @@ class Ui_Dialog(object):
         self.groupBox_2.setTitle(_translate("Dialog", "Статистика"))
         self.ResultButton.setText(_translate("Dialog", "Итоги"))
         self.FindButton.setText(_translate("Dialog", "Поиск"))
+        self.FormButton.setText(_translate("Dialog", "Получить отчет"))

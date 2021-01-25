@@ -125,7 +125,7 @@
      <string>Поиск</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="FormButton">
     <property name="geometry">
      <rect>
       <x>390</x>

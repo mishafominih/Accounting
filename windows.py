@@ -4,6 +4,7 @@ import Add
 import Works
 import Lose
 import Result
+import Form
 import Database as db
 
 class addWindow(QtWidgets.QMainWindow):
@@ -74,6 +75,13 @@ class ResultWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
 
+class FormWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(FormWindow, self).__init__(parent)
+        self.ui = Form.Ui_Dialog()
+        self.ui.setupUi(self)
+
+
 class StartWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(StartWindow, self).__init__()
@@ -87,6 +95,8 @@ class StartWindow(QtWidgets.QMainWindow):
         self.ui.LoseButton.clicked.connect(self.LoseBtnClicked)
 
         self.ui.ResultButton.clicked.connect(self.ResultBtnClicked)
+
+        self.ui.FormButton.clicked.connect(self.FormBtnClicked)
 
     def AddBtnClicked(self):
         self.dialog = addWindow(self)
@@ -102,6 +112,10 @@ class StartWindow(QtWidgets.QMainWindow):
 
     def ResultBtnClicked(self):
         self.dialog = ResultWindow(self)
+        self.dialog.show()
+
+    def FormBtnClicked(self):
+        self.dialog = FormWindow(self)
         self.dialog.show()
 
 
