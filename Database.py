@@ -1,6 +1,13 @@
 import sqlite3 as sl
 
 
+class DataExpenses:
+    def __init__(self, date, price, information):
+        self.Date = date
+        self.Price = price
+        self.Information = information
+
+
 class DataOrders:
     def __init__(self, number, price, time, type_orders, name_customer, car):
         self.Number = number
@@ -12,7 +19,6 @@ class DataOrders:
 
 
 class Database:
-
     @staticmethod
     def _AddElement(path, request, data):
         database = sl.connect(path)
@@ -30,10 +36,10 @@ class Database:
         customers = sl.connect('customer.db')
         orders = sl.connect('orders.db')
         result = []
-        request = 'select * from ORDERS where Number = ' + str(number)
+        request = 'select Number, Price, Time, Type from ORDERS where Number = ' + str(number)
         with orders:
             result += orders.execute(request)
-        request = 'select * from CUSTOMERS where Number = ' + str(number)
+        request = 'select Name, Car from CUSTOMERS where Number = ' + str(number)
         with customers:
             result += customers.execute(request)
         return result
@@ -43,6 +49,12 @@ class Database:
         request = 'insert into ORDERS (Number, Price, Time, Type) values (?, ?, ?, ?)'
         data = [(my_order.Number, my_order.Price, my_order.Time, my_order.Type)]
         Database._AddElement('orders.db', request, data)
+
+    @staticmethod
+    def AddExpenses(my_expenses):
+        request = 'insert into EXPENSES (Date, Price, Information) values (?, ?, ?)'
+        data = [(my_expenses.Date, my_expenses.Price, my_expenses.Information)]
+        Database._AddElement('Expenses.db', request, data)
 
     @staticmethod
     def AddTypeWork(data):
@@ -70,13 +82,5 @@ class Database:
         database.commit()
 
 
-y = Database()
-y.AddTypeWork("Чистка")
-for val in y.GetTypeWork():
-    print(val)
-y.DeleteData('work_type.db', "WORK_TYPE")
-print('Удаление произошло?')
-for val in y.GetTypeWork():
-    print(val)
-
-print('Произошло :)')
+c = sl.connect('Expenses.db')
+print(Database.Find(15))
