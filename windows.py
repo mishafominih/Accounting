@@ -17,25 +17,36 @@ class addWindow(QtWidgets.QMainWindow):
 
         self.ui.AddButton.clicked.connect(self.AddBtnClicked)
 
+        self.ui.AddWorkButton.clicked.connect(self.AddWorkBtnClicked)
+
+        self.ui.DelWorkButton.clicked.connect(self.DelWorkBtnClicked)
+
+        self.ui.WorksBox.addItems(db.Database.GetTypesWork())
+
     def BackBtnClicked(self):
         self.close()
 
+    def AddWorkBtnClicked(self):
+        work = self.ui.WorksBox.currentText()
+        self.ui.listWidget.addItem(work)
+
+    def DelWorkBtnClicked(self):
+        self.ui.listWidget.takeItem(self.ui.listWidget.count() - 1)
+
     def AddBtnClicked(self):
-        pn = int(self.ui.PhoneNumber.text())
-        c = int(self.ui.Cast.text())
-        t = float(self.ui.Time.text())
-        n = self.ui.Name.text()
-        r = self.ui.Car.text()
+        items = []
+        for x in range(self.ui.listWidget.count() - 1):
+            items.append(self.ui.listWidget.item(x))
         data = db.DataOrders(
-            100,
-            pn,
-            c,
-            t,
-            "временно",
-            n,
-            r
+            int(self.ui.PhoneNumber.text()),
+            int(self.ui.Cast.text()),
+            float(self.ui.Time.text()),
+            items,
+            self.ui.Name.text(),
+            self.ui.Car.text(),
+            self.ui.dateEdit.currentSection()
         )
-        db.Database.AddOrders(data)
+        db.Database._AddOrders(data)
 
 
 class WorksWindow(QtWidgets.QMainWindow):
@@ -44,16 +55,27 @@ class WorksWindow(QtWidgets.QMainWindow):
         self.ui = Works.Ui_Dialog()
         self.ui.setupUi(self)
 
-        #self.ui.listWidget.addItems(["1", "2", "3"])
+        self._Fill()
 
         self.ui.AddButton.clicked.connect(self.AddBtnClicked)
         self.ui.DelButton.clicked.connect(self.DelBtnClicked)
 
     def AddBtnClicked(self):
-        self.ui.listWidget.addItem(self.ui.AddLine.text())
+        str = self.ui.AddLine.text()
+        self.ui.listWidget.addItem(str)
+        db.Database.AddTypeWork(str)
+        self.ui.AddLine.clear()
 
     def DelBtnClicked(self):
-        return 0
+        str = self.ui.DelLine.text()
+        self.ui.listWidget.clear()
+        db.Database.DeleteWork(str)
+        self._Fill()
+        self.ui.DelLine.clear()
+
+    def _Fill(self):
+        works = db.Database.GetTypesWork()
+        self.ui.listWidget.addItems(works)
 
 
 class LoseWindow(QtWidgets.QMainWindow):
