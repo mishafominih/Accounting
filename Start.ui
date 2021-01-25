@@ -125,6 +125,19 @@
      <string>Поиск</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>50</y>
+      <width>271</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Получить отчет</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
