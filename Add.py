@@ -77,4 +77,4 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "ФИО:"))
         self.label_4.setText(_translate("Dialog", "Стоимость:"))
         self.label_5.setText(_translate("Dialog", "Время:"))
-        self.BackButton.setText(_translate("Dialog", "Добавить"))
+        self.BackButton.setText(_translate("Dialog", "Назад"))

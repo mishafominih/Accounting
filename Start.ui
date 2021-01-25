@@ -30,7 +30,7 @@
    <property name="title">
     <string>работа</string>
    </property>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="AddButton">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -43,7 +43,7 @@
      <string>Добавить заказ</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="WorksButton">
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -74,7 +74,7 @@
    <property name="title">
     <string>Статистика</string>
    </property>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="ResultButton">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -99,7 +99,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="FindButton">
     <property name="geometry">
      <rect>
       <x>30</x>
