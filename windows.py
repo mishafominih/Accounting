@@ -8,6 +8,11 @@ class addWindow(QtWidgets.QMainWindow):
         self.ui = Add.Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.ui.BackButton.clicked.connect(self.BackBtnClicked)
+
+    def BackBtnClicked(self):
+        self.close()
+
 
 class StartWindow(QtWidgets.QMainWindow):
     def __init__(self):
