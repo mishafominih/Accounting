@@ -19,7 +19,7 @@
      <x>30</x>
      <y>30</y>
      <width>1061</width>
-     <height>401</height>
+     <height>341</height>
     </rect>
    </property>
    <property name="font">
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>320</y>
+      <y>260</y>
       <width>231</width>
       <height>61</height>
      </rect>
@@ -47,7 +47,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>51</y>
+      <y>41</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -57,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>50</y>
+      <y>40</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -70,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>50</y>
+      <y>40</y>
       <width>601</width>
       <height>31</height>
      </rect>
@@ -80,7 +80,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>49</y>
+      <y>39</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -93,12 +93,40 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>120</y>
+      <y>90</y>
       <width>392</width>
       <height>236</height>
      </rect>
     </property>
    </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>390</y>
+     <width>381</width>
+     <height>431</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="title">
+    <string>Удалить расходы</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>400</y>
+     <width>661</width>
+     <height>421</height>
+    </rect>
+   </property>
   </widget>
  </widget>
  <resources/>

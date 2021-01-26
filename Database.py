@@ -25,7 +25,7 @@ class Database:
     @staticmethod
     def GetExpenses(start_date, end_date):
         expenses = sl.connect('Expenses.db')
-        request = "select Price from EXPENSES where Date between '" + str(start_date) + "' and '" +\
+        request = "select Date, Price, Information from EXPENSES where Date between '" + str(start_date) + "' and '" +\
                   str(end_date) + "'"
         result = []
         with expenses:

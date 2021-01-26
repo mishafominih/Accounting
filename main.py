@@ -1,3 +1,5 @@
+import  random
+
 from PyQt5 import QtWidgets
 import  windows as w
 import sys

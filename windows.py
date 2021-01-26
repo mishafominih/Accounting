@@ -1,4 +1,6 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QTableWidgetItem
+
 import Start
 import Add
 import Works
@@ -6,6 +8,10 @@ import Lose
 import Result
 import Form
 import Database as db
+import traceback
+from datetime import date
+
+DATETIME_FORMAT = "yyyy-MM-dd"
 
 class addWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -35,18 +41,24 @@ class addWindow(QtWidgets.QMainWindow):
 
     def AddBtnClicked(self):
         items = []
-        for x in range(self.ui.listWidget.count() - 1):
-            items.append(self.ui.listWidget.item(x))
+        #while self.ui.listWidget.count() > 0:
+        #    items.append(self.ui.listWidget.takeItem(0).text())
+        str = self.ui.calendarWidget.selectedDate().toString(DATETIME_FORMAT)
+        s = self.ui.listWidget.takeItem(0).text()
         data = db.DataOrders(
             int(self.ui.PhoneNumber.text()),
             int(self.ui.Cast.text()),
             float(self.ui.Time.text()),
-            items,
+            s,
             self.ui.Name.text(),
             self.ui.Car.text(),
-            self.ui.dateEdit.currentSection()
+            str,
+            int(self.ui.Cast_2.text())
         )
-        db.Database._AddOrders(data)
+        #try:
+        db.Database.AddData(data)
+        #except ValueError:
+            #print(traceback.format_exc())
 
 
 class WorksWindow(QtWidgets.QMainWindow):
@@ -86,8 +98,32 @@ class LoseWindow(QtWidgets.QMainWindow):
 
         self.ui.AddButton.clicked.connect(self.AddBtnClicked)
 
+        self.ui.tableWidget.setColumnCount(3)
+        list = db.Database.GetExpenses('0000-00-00', date.today())
+        self.ui.tableWidget.setRowCount(len(list))
+        self.ui.tableWidget.setHorizontalHeaderLabels(
+            ('Дата', 'Количество', 'Цель')
+        )
+
+        row = 0
+        for tup in list:
+            col = 0
+            for item in tup:
+                cellinfo = QTableWidgetItem(item)
+                self.ui.tableWidget.setItem(row, col, cellinfo)
+                col += 1
+
+            row += 1
+
     def AddBtnClicked(self):
-        return 0
+        lose = db.DataExpenses(
+            self.ui.calendarWidget.selectedDate().toString(DATETIME_FORMAT),
+            int(self.ui.Count.text()),
+            self.ui.Target.text()
+        )
+        db.Database.AddExpenses(lose)
+        self.ui.Target.clear()
+        self.ui.Count.clear()
 
 
 class ResultWindow(QtWidgets.QMainWindow):
