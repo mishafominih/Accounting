@@ -9,7 +9,7 @@ class DataExpenses:
 
 
 class DataOrders:
-    def __init__(self, number, price, time, type_orders, name_customer, car, date):
+    def __init__(self, number, price, time, type_orders, name_customer, car, date, amrt):
         self.Number = number
         self.Price = price
         self.Time = time
@@ -17,11 +17,12 @@ class DataOrders:
         self.Name = name_customer
         self.Car = car
         self.date = date
+        self.AMRT = amrt
 
 
 class Database:
     @staticmethod
-    def AddData(data:DataOrders):
+    def AddData(data: DataOrders):
         Database._AddCustomer(data)
         Database._AddOrders(data)
 
@@ -32,7 +33,7 @@ class Database:
         result = []
         with orders, customers:
             result += orders.execute(
-                'select Number, Price, Time, Type from ORDERS where Number = ' + str(number)
+                'select Number, Price, Time, Type, Date, AMRT from ORDERS where Number = ' + str(number)
             )
             result += customers.execute(
                 'select Name, Car from CUSTOMERS where Number = ' + str(number)
@@ -92,10 +93,8 @@ class Database:
 
     @staticmethod
     def _AddOrders(my_order):
-        request = 'insert into ORDERS (Number, Price, Time, Type) values (?, ?, ?, ?)'
-        data = [(my_order.Number, my_order.Price, my_order.Time, my_order.Type)]
+        request = 'insert into ORDERS (Number, Price, Time, Type, Date, AMRT) values (?, ?, ?, ?, ?, ?)'
+        data = [(my_order.Number, my_order.Price, my_order.Time, my_order.Type, my_order.date, my_order.AMRT)]
         Database._AddElement('orders.db', request, data)
 
 
-c = sl.connect('Expenses.db')
-print(Database.Find(15))
