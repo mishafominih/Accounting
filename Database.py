@@ -1,22 +1,23 @@
 import sqlite3 as sl
+from datetime import date
 
 
 class DataExpenses:
-    def __init__(self, date, price, information):
-        self.Date = date
+    def __init__(self, expenses_date, price, information):
+        self.Date = expenses_date
         self.Price = price
         self.Information = information
 
 
 class DataOrders:
-    def __init__(self, number, price, time, type_orders, name_customer, car, date, amrt):
+    def __init__(self, number, price, orders_time, type_orders, name_customer, car, orders_date, amrt):
         self.Number = number
         self.Price = price
-        self.Time = time
+        self.Time = orders_time
         self.Type = type_orders
         self.Name = name_customer
         self.Car = car
-        self.date = date
+        self.date = orders_date
         self.AMRT = amrt
 
 
@@ -35,9 +36,9 @@ class Database:
             result += orders.execute(
                 'select Number, Price, Time, Type, Date, AMRT from ORDERS where Number = ' + str(number)
             )
-            result += customers.execute(
+            result += (customers.execute(
                 'select Name, Car from CUSTOMERS where Number = ' + str(number)
-            )
+            ))
         return result
 
     @staticmethod
@@ -87,9 +88,10 @@ class Database:
 
     @staticmethod
     def _AddCustomer(my_customer):
-        request = 'insert into CUSTOMERS (Number, Name, Car) values (?, ?, ?)'
-        data = [(my_customer.Number, my_customer.Name, my_customer.Car)]
-        Database._AddElement('customer.db', request, data)
+        if len(Database.Find(my_customer.Number)) == 0:
+            request = 'insert into CUSTOMERS (Number, Name, Car) values (?, ?, ?)'
+            data = [(my_customer.Number, my_customer.Name, my_customer.Car)]
+            Database._AddElement('customer.db', request, data)
 
     @staticmethod
     def _AddOrders(my_order):
@@ -98,3 +100,7 @@ class Database:
         Database._AddElement('orders.db', request, data)
 
 
+x = DataOrders(102, 10, 2, 'мойка', 'Дима', 'Honda', date.today(), 300)
+print(Database.Find(100))
+print(Database.Find(101))
+print(Database.Find(102))
