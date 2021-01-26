@@ -23,6 +23,17 @@ class DataOrders:
 
 class Database:
     @staticmethod
+    def GetExpenses(start_date, end_date):
+        expenses = sl.connect('Expenses.db')
+        request = "select Price from EXPENSES where Date between '" + str(start_date) + "' and '" +\
+                  str(end_date) + "'"
+        result = []
+        with expenses:
+            for i in expenses.execute(request):
+                result.append(i)
+            return result
+
+    @staticmethod
     def AddData(data: DataOrders):
         Database._AddCustomer(data)
         Database._AddOrders(data)
@@ -34,7 +45,7 @@ class Database:
         result = []
         with orders, customers:
             result += orders.execute(
-                'select Number, Price, Time, Type, Date, AMRT from ORDERS where Number = ' + str(number)
+                'select * from ORDERS where Number = ' + str(number)
             )
             result += (customers.execute(
                 'select Name, Car from CUSTOMERS where Number = ' + str(number)
@@ -95,12 +106,21 @@ class Database:
 
     @staticmethod
     def _AddOrders(my_order):
-        request = 'insert into ORDERS (Number, Price, Time, Type, Date, AMRT) values (?, ?, ?, ?, ?, ?)'
-        data = [(my_order.Number, my_order.Price, my_order.Time, my_order.Type, my_order.date, my_order.AMRT)]
+        request = 'insert into ORDERS (Number, Price, Time, Date, AMRT) values (?, ?, ?, ?, ?)'
+        data = [(my_order.Number, my_order.Price, my_order.Time, my_order.date, my_order.AMRT)]
         Database._AddElement('orders.db', request, data)
+        id_orders = Database.Find(my_order.Number)[0][0]
+        request = 'insert into SERVICE_TYPE (ID_ORDERS, Number, Name) values(?, ?, ?)'
+        for val in my_order.Type:
+            data = [(id_orders, my_order.Number, val)]
+            Database._AddElement('service_type.db', request, data)
 
 
-x = DataOrders(102, 10, 2, 'мойка', 'Дима', 'Honda', date.today(), 300)
-print(Database.Find(100))
-print(Database.Find(101))
-print(Database.Find(102))
+z = sl.connect('service_type.db')
+t = ['чистка', 'мойка', 'что-то еще']
+Database.DeleteData('Expenses.db', 'EXPENSES')
+y = DataExpenses(date.today(), 300, 'Чистка')
+x = DataOrders(102, 10, 2, t, 'Дима', 'Honda', date.today(), 300)
+start = date(2010, 10, 10)
+end = date(2022, 1, 30)
+print(Database.GetExpenses(start, end))
