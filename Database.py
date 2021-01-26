@@ -92,6 +92,15 @@ class Database:
         database.commit()
 
     @staticmethod
+    def DeleteExpenses(date, price, info):
+        database = sl.connect("Expenses.db")
+        cursor = database.cursor()
+        request = 'delete from EXPENSES where Date = (\'' + date + '\')' \
+                ' and Price = (\'' + price + '\') and Information = (\'' + info + '\')'
+        cursor.execute(request)
+        database.commit()
+
+    @staticmethod
     def _AddElement(path, request, data):
         database = sl.connect(path)
         with database:

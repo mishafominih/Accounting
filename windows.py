@@ -97,19 +97,28 @@ class LoseWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.ui.AddButton.clicked.connect(self.AddBtnClicked)
+        self.ui.DelButton.clicked.connect(self.DelBtnClicked)
 
+        self.ui.tableWidget.setSortingEnabled(True)
         self.ui.tableWidget.setColumnCount(3)
-        list = db.Database.GetExpenses('0000-00-00', date.today())
-        self.ui.tableWidget.setRowCount(len(list))
+        self.ui.tableWidget.setColumnWidth(0, 125)
+        self.ui.tableWidget.setColumnWidth(1, 150)
+        self.ui.tableWidget.setColumnWidth(2, 500)
         self.ui.tableWidget.setHorizontalHeaderLabels(
             ('Дата', 'Количество', 'Цель')
         )
+        self.Update()
+
+    def Update(self):
+        self.ui.tableWidget.clear()
+        list = db.Database.GetExpenses('0000-00-00', date.today())
+        self.ui.tableWidget.setRowCount(len(list))
 
         row = 0
-        for tup in list:
+        for tup in list[::-1]:
             col = 0
             for item in tup:
-                cellinfo = QTableWidgetItem(item)
+                cellinfo = QTableWidgetItem(item.__str__())
                 self.ui.tableWidget.setItem(row, col, cellinfo)
                 col += 1
 
@@ -124,6 +133,15 @@ class LoseWindow(QtWidgets.QMainWindow):
         db.Database.AddExpenses(lose)
         self.ui.Target.clear()
         self.ui.Count.clear()
+        self.Update()
+
+    def DelBtnClicked(self):
+        items = []
+        for e in self.ui.tableWidget.selectedItems():
+            items.append(e.text())
+        if len(items) > 0:
+            db.Database.DeleteExpenses(items[0], items[1], items[2])
+            self.Update()
 
 
 class ResultWindow(QtWidgets.QMainWindow):
