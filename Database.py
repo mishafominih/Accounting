@@ -113,6 +113,19 @@ class Database:
         database.commit()
 
     @staticmethod
+    def DeleteOrder(data:DataOrders):
+        orders = sl.connect('orders.db')
+        works = sl.connect('service_type.db')
+        if data.ID is not None:
+            id = data.ID
+        else:
+            id = Database.Find(data)[0][0]
+        with orders, works:
+            orders.execute('delete from ORDERS where ID = (\'' + str(id) + '\')')
+            works.execute(
+                'delete from SERVICE_TYPE where ID_ORDERS = (\'' + str(id) + '\')')
+
+    @staticmethod
     def _GetDataForPeriod(path, request, start_date, end_date):
         database = sl.connect(path)
         request += "'" + str(start_date) + "' and '" + str(end_date) + "'"
@@ -204,9 +217,6 @@ class Database:
 
 
 my_type = ['чистка', 'мытье']
-y = sl.connect('orders.db')
-"""Database.DeleteData('orders.db', 'ORDERS')
-Database.DeleteData('service_type.db', 'SERVICE_TYPE')"""
 y = DataOrders(
     number=10,
     car='ВАЗ-2112',
@@ -216,6 +226,7 @@ y = DataOrders(
     name_customer='Вазген',
     orders_date=date.today(),
     amrt=100)
+Database.DeleteOrder(y)
 x = DataOrders(orders_date=date.today())
 
 print(Database.Find(x))
