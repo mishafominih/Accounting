@@ -10,15 +10,23 @@ class DataExpenses:
 
 
 class DataOrders:
-    def __init__(self, number, price, orders_time, type_orders, name_customer, car, orders_date, amrt):
+    def __init__(self, Id=None, number=None, price=None, orders_time= None, type_orders=None,
+                 name_customer=None, car=None, orders_date=None, amrt=None):
+        self.ID = Id
         self.Number = number
         self.Price = price
         self.Time = orders_time
         self.Type = type_orders
         self.Name = name_customer
         self.Car = car
-        self.date = orders_date
+        self.Date = None
+        if orders_date is not None:
+            self.Date = str(orders_date)
         self.AMRT = amrt
+
+    @staticmethod
+    def __dir__():
+        return [['ID', 'Number', 'Name', 'Car', 'Price', 'Time', 'AMRT', 'Date'], ['Type']]
 
 
 class Database:
@@ -35,22 +43,24 @@ class Database:
 
     @staticmethod
     def AddData(data: DataOrders):
-        Database._AddCustomer(data)
         Database._AddOrders(data)
 
     @staticmethod
-    def Find(number):
-        customers = sl.connect('customer.db')
-        orders = sl.connect('orders.db')
-        result = []
-        with orders, customers:
-            result += orders.execute(
-                'select * from ORDERS where Number = ' + str(number)
-            )
-            result += (customers.execute(
-                'select Name, Car from CUSTOMERS where Number = ' + str(number)
-            ))
-        return result
+    def Find(data_orders: DataOrders):
+        if not Database._BadFields(data_orders):
+            result_for_orders = Database._GetOrders(data_orders)
+        else:
+            result_for_orders = None
+        result_for_type = []
+        id_orders = Database._GetType(data_orders)
+        for val in id_orders:
+            result_for_type += Database._GetOrders(DataOrders(val))
+        if result_for_orders is None:
+            return result_for_type
+        elif len(id_orders) == 0:
+            return result_for_orders
+        else:
+            return [x for x in result_for_orders if x in result_for_type]
 
     @staticmethod
     def AddExpenses(my_expenses):
@@ -101,35 +111,85 @@ class Database:
         database.commit()
 
     @staticmethod
+    def _GetType(data):
+        service_type = sl.connect('service_type.db')
+        result = []
+        if data.Type is None:
+            return []
+        for val in data.Type:
+            request = 'select ID_ORDERS from SERVICE_TYPE where Name = ' + "'" + val + "'"
+            with service_type:
+                for element in service_type.execute(request):
+                    result += element
+        return set(result)
+
+    @staticmethod
+    def _BadFields(data_orders):
+        for val in DataOrders.__dir__()[0]:
+            if getattr(data_orders, val) is not None:
+                return False
+        return True
+
+    @staticmethod
+    def _GetOrders(data_orders):
+        orders = sl.connect('orders.db')
+        service_type = sl.connect('service_type.db')
+        request_orders = Database._GetRequestForFind('ORDERS', DataOrders.__dir__()[0], data_orders)
+        result = []
+        with orders, service_type:
+            database_orders = (orders.execute(request_orders))
+            for val in database_orders:
+                data = [val]
+                id_orders = val[0]
+                for m_type in service_type.execute('select Name from SERVICE_TYPE where ID_ORDERS = '
+                                                   + str(id_orders)):
+                    data.append(m_type)
+                result.append(data)
+        return result
+
+    @staticmethod
+    def _GetRequestForFind(name_database, fields, data):
+        request = "select * from " + name_database + " where "
+        back_field = False
+        for index, val in enumerate(fields):
+            field = getattr(data, val)
+            if field is not None:
+                if len(fields) >= index and back_field:
+                    request += " and "
+                back_field = True
+                request += val + " = "
+                if type(field) is str:
+                    request += "'" + str(field) + "'" + " "
+                else:
+                    request += str(field) + " "
+        return request
+
+    @staticmethod
     def _AddElement(path, request, data):
         database = sl.connect(path)
         with database:
             database.executemany(request, data)
 
     @staticmethod
-    def _AddCustomer(my_customer):
-        if len(Database.Find(my_customer.Number)) == 0:
-            request = 'insert into CUSTOMERS (Number, Name, Car) values (?, ?, ?)'
-            data = [(my_customer.Number, my_customer.Name, my_customer.Car)]
-            Database._AddElement('customer.db', request, data)
-
-    @staticmethod
-    def _AddOrders(my_order):
-        request = 'insert into ORDERS (Number, Price, Time, Date, AMRT) values (?, ?, ?, ?, ?)'
-        data = [(my_order.Number, my_order.Price, my_order.Time, my_order.date, my_order.AMRT)]
+    def _AddOrders(my_order: DataOrders):
+        request = 'insert into ORDERS (Number, Name, Car, Price, Time, Date, AMRT) values (?, ?, ?, ?, ?, ?, ?)'
+        data = [(my_order.Number, my_order.Name, my_order.Car, my_order.Price, my_order.Time, my_order.Date, my_order.AMRT)]
         Database._AddElement('orders.db', request, data)
-        id_orders = Database.Find(my_order.Number)[0][0]
-        request = 'insert into SERVICE_TYPE (ID_ORDERS, Number, Name) values(?, ?, ?)'
+        orders = sl.connect('orders.db')
+        request = Database._GetRequestForFind('ORDERS', DataOrders.__dir__()[0], my_order)
+
+        with orders:
+            for val in orders.execute(request):
+                id_orders = val[0]
+
+        request = 'insert into SERVICE_TYPE (ID_ORDERS, Name) values(?, ?)'
         for val in my_order.Type:
-            data = [(id_orders, my_order.Number, val)]
+            data = [(id_orders, val)]
             Database._AddElement('service_type.db', request, data)
 
 
-z = sl.connect('service_type.db')
-t = ['чистка', 'мойка', 'что-то еще']
-Database.DeleteData('Expenses.db', 'EXPENSES')
-y = DataExpenses(date.today(), 300, 'Чистка')
-x = DataOrders(102, 10, 2, t, 'Дима', 'Honda', date.today(), 300)
-start = date(2010, 10, 10)
-end = date(2022, 1, 30)
-print(Database.GetTypesWork())
+my_type = ['чистка', 'мытье']
+y = sl.connect('orders.db')
+x = DataOrders(None, None, None, None, None, None, None, None, None)
+
+print(Database.Find(x))
