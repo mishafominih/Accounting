@@ -226,7 +226,6 @@ y = DataOrders(
     name_customer='Вазген',
     orders_date=date.today(),
     amrt=100)
-Database.DeleteOrder(y)
 x = DataOrders(orders_date=date.today())
 
 print(Database.Find(x))
