@@ -45,6 +45,7 @@ class addWindow(QtWidgets.QMainWindow):
             items.append(self.ui.listWidget.takeItem(0).text())
         str = self.ui.calendarWidget.selectedDate().toString(DATETIME_FORMAT)
         data = db.DataOrders(
+            None,
             int(self.ui.PhoneNumber.text()),
             int(self.ui.Cast.text()),
             float(self.ui.Time.text()),
@@ -202,9 +203,6 @@ class FindWindow(QtWidgets.QMainWindow):
                 col += 1
 
             row += 1
-
-
-
 
 
 class FormWindow(QtWidgets.QMainWindow):
