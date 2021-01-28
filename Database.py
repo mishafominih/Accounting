@@ -32,14 +32,16 @@ class DataOrders:
 class Database:
     @staticmethod
     def GetExpenses(start_date, end_date):
-        expenses = sl.connect('Expenses.db')
-        request = "select Date, Price, Information from EXPENSES where Date between '" + str(start_date) + "' and '" +\
-                  str(end_date) + "'"
+        request = "select Date, Price, Information from EXPENSES where Date between "
+        return Database._GetDataForPeriod('Expenses.db', request, start_date, end_date)
+
+    @staticmethod
+    def GetDataForPeriod(start_date, end_date):
+        request = "select ID from ORDERS where Date between "
         result = []
-        with expenses:
-            for i in expenses.execute(request):
-                result.append(i)
-            return result
+        for id_orders in Database._GetDataForPeriod('orders.db', request, start_date, end_date):
+            result += Database.Find(DataOrders(Id=id_orders))
+        return result
 
     @staticmethod
     def AddData(data: DataOrders):
@@ -109,6 +111,16 @@ class Database:
                 ' and Price = (\'' + price + '\') and Information = (\'' + info + '\')'
         cursor.execute(request)
         database.commit()
+
+    @staticmethod
+    def _GetDataForPeriod(path, request, start_date, end_date):
+        database = sl.connect(path)
+        request += "'" + str(start_date) + "' and '" + str(end_date) + "'"
+        result = []
+        with database:
+            for i in database.execute(request):
+                result += i
+            return result
 
     @staticmethod
     def _GetType(data):
@@ -190,6 +202,5 @@ class Database:
 
 my_type = ['чистка', 'мытье']
 y = sl.connect('orders.db')
-x = DataOrders(None, None, None, None, None, None, None, None, None)
 
-print(Database.Find(x))
+print(Database.GetDataForPeriod(date.min, date(2022, 1, 1)))
