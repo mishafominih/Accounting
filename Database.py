@@ -148,14 +148,17 @@ class Database:
         service_type = sl.connect('service_type.db')
         request_orders = Database._GetRequestForFind('ORDERS', DataOrders.__dir__()[0], data_orders)
         result = []
+        data = []
         with orders, service_type:
             database_orders = (orders.execute(request_orders))
             for val in database_orders:
-                data = [val]
+                data += val
                 id_orders = val[0]
+                types = []
                 for m_type in service_type.execute('select Name from SERVICE_TYPE where ID_ORDERS = '
                                                    + str(id_orders)):
-                    data.append(m_type)
+                     types += m_type
+                data.append(types)
                 result.append(data)
         return result
 
@@ -203,4 +206,4 @@ class Database:
 my_type = ['чистка', 'мытье']
 y = sl.connect('orders.db')
 
-print(Database.GetDataForPeriod(date.min, date(2022, 1, 1)))
+print(Database.Find(DataOrders(Id=7)))
