@@ -18,7 +18,7 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>461</width>
+     <width>391</width>
      <height>811</height>
     </rect>
    </property>
@@ -33,8 +33,8 @@
    <widget class="QPushButton" name="Form">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>740</y>
+      <x>80</x>
+      <y>690</y>
       <width>191</width>
       <height>61</height>
      </rect>
@@ -72,7 +72,7 @@
    <widget class="QCalendarWidget" name="Start">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>0</x>
       <y>80</y>
       <width>392</width>
       <height>236</height>
@@ -82,13 +82,23 @@
    <widget class="QCalendarWidget" name="End">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>390</y>
+      <x>0</x>
+      <y>380</y>
       <width>392</width>
       <height>236</height>
      </rect>
     </property>
    </widget>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>20</y>
+     <width>681</width>
+     <height>801</height>
+    </rect>
+   </property>
   </widget>
  </widget>
  <resources/>

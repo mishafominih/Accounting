@@ -7,8 +7,8 @@ import Works
 import Lose
 import Result
 import Form
+import Find
 import Database as db
-import traceback
 from datetime import date
 
 DATETIME_FORMAT = "yyyy-MM-dd"
@@ -41,24 +41,20 @@ class addWindow(QtWidgets.QMainWindow):
 
     def AddBtnClicked(self):
         items = []
-        #while self.ui.listWidget.count() > 0:
-        #    items.append(self.ui.listWidget.takeItem(0).text())
+        while self.ui.listWidget.count() > 0:
+            items.append(self.ui.listWidget.takeItem(0).text())
         str = self.ui.calendarWidget.selectedDate().toString(DATETIME_FORMAT)
-        s = self.ui.listWidget.takeItem(0).text()
         data = db.DataOrders(
             int(self.ui.PhoneNumber.text()),
             int(self.ui.Cast.text()),
             float(self.ui.Time.text()),
-            s,
+            items,
             self.ui.Name.text(),
             self.ui.Car.text(),
             str,
             int(self.ui.Cast_2.text())
         )
-        #try:
         db.Database.AddData(data)
-        #except ValueError:
-            #print(traceback.format_exc())
 
 
 class WorksWindow(QtWidgets.QMainWindow):
@@ -151,11 +147,80 @@ class ResultWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
 
+class FindWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(FindWindow, self).__init__(parent)
+        self.ui = Find.Ui_Dialog()
+        self.ui.setupUi(self)
+
+        self.ui.FindButton.clicked.connect(self.FindBtn)
+
+        self.ui.comboBox.addItem('Не выбрано')
+        self.ui.comboBox.addItems(db.Database.GetTypesWork())
+
+        self.ui.tableWidget.setSortingEnabled(True)
+        self.ui.tableWidget.setColumnCount(8)
+        # self.ui.tableWidget.setColumnWidth(0, 125)
+        # self.ui.tableWidget.setColumnWidth(1, 150)
+        # self.ui.tableWidget.setColumnWidth(2, 500)
+        self.ui.tableWidget.setHorizontalHeaderLabels(
+            ('Номер', 'ФИО', 'Машина', 'доход', 'время', 'дата', 'Аморт.',
+             'работа')
+        )
+
+    def FindBtn(self):
+        order = db.DataOrders()
+        if self.ui.Number.text() != '':
+            order.Number = int(self.ui.Number.text())
+        if self.ui.FIO.text() != '':
+            order.Name = self.ui.FIO.text()
+        if self.ui.Car.text() != '':
+            order.Car = self.ui.Car.text()
+        if self.ui.comboBox.currentText() != 'Не выбрано':
+            order.Type = [self.ui.comboBox.currentText()]
+        if self.ui.radioButton.isChecked():
+            order.Date = self.ui.calendarWidget.selectedDate().toString(DATETIME_FORMAT)
+        data = db.Database.Find(order)
+        self.Update(data)
+
+
+    def Update(self, data):
+        self.ui.tableWidget.clear()
+        list = data
+        self.ui.tableWidget.setRowCount(len(list))
+        self.ui.tableWidget.setHorizontalHeaderLabels(
+            ('Номер', 'ФИО', 'Машина', 'доход', 'время', 'дата', 'Аморт.',
+             'работа')
+        )
+
+        row = 0
+        for tup in list[::-1]:
+            col = 0
+            for item in tup[1::]:
+                cellinfo = QTableWidgetItem(item.__str__())
+                self.ui.tableWidget.setItem(row, col, cellinfo)
+                col += 1
+
+            row += 1
+
+
+
+
+
 class FormWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(FormWindow, self).__init__(parent)
         self.ui = Form.Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.ui.tableWidget.setSortingEnabled(True)
+        self.ui.tableWidget.setColumnCount(8)
+        #self.ui.tableWidget.setColumnWidth(0, 125)
+        #self.ui.tableWidget.setColumnWidth(1, 150)
+        #self.ui.tableWidget.setColumnWidth(2, 500)
+        self.ui.tableWidget.setHorizontalHeaderLabels(
+            ('Номер', 'ФИО', 'Машина', 'доход', 'время', 'дата', 'Аморт.', 'работа')
+        )
 
 
 class StartWindow(QtWidgets.QMainWindow):
@@ -173,6 +238,8 @@ class StartWindow(QtWidgets.QMainWindow):
         self.ui.ResultButton.clicked.connect(self.ResultBtnClicked)
 
         self.ui.FormButton.clicked.connect(self.FormBtnClicked)
+
+        self.ui.FindButton.clicked.connect(self.FindBtnClicked)
 
     def AddBtnClicked(self):
         self.dialog = addWindow(self)
@@ -194,4 +261,7 @@ class StartWindow(QtWidgets.QMainWindow):
         self.dialog = FormWindow(self)
         self.dialog.show()
 
+    def FindBtnClicked(self):
+        self.dialog = FindWindow(self)
+        self.dialog.show()
 
