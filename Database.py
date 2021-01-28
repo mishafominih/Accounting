@@ -148,10 +148,10 @@ class Database:
         service_type = sl.connect('service_type.db')
         request_orders = Database._GetRequestForFind('ORDERS', DataOrders.__dir__()[0], data_orders)
         result = []
-        data = []
         with orders, service_type:
             database_orders = (orders.execute(request_orders))
             for val in database_orders:
+                data = []
                 data += val
                 id_orders = val[0]
                 types = []
@@ -205,5 +205,17 @@ class Database:
 
 my_type = ['чистка', 'мытье']
 y = sl.connect('orders.db')
+"""Database.DeleteData('orders.db', 'ORDERS')
+Database.DeleteData('service_type.db', 'SERVICE_TYPE')"""
+y = DataOrders(
+    number=10,
+    car='ВАЗ-2112',
+    price=120,
+    orders_time=0.5,
+    type_orders=my_type,
+    name_customer='Вазген',
+    orders_date=date.today(),
+    amrt=100)
+x = DataOrders(orders_date=date.today())
 
-print(Database.Find(DataOrders(Id=7)))
+print(Database.Find(x))
